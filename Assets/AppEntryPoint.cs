@@ -8,7 +8,8 @@ public class AppEntryPoint : MonoBehaviour
 {
     [SerializeField] private GameObject _type;
     [SerializeField] private Button Button;
-    
+
+    private bool _initialized;
     
     // Start is called before the first frame update
     void Start()
