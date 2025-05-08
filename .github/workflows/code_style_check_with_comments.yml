@@ -5,7 +5,7 @@ on:
 
 jobs:
   code-style-check:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v4
@@ -14,16 +14,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '6.0.x'
-
-    - name: Download ReSharper CLI
-      run: |
-        wget https://download.jetbrains.com/resharper/ReSharperCommandLineTools.2024.1.0.zip
-        unzip ReSharperCommandLineTools.2024.1.0.zip -d resharper-cli
-
-    - name: Install ReviewDog
-      run: |
-        curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b ./bin
-
+        
     - name: Run InspectCode
       run: |
         mono ./resharper-cli/inspectcode.sh --profile=hitapps_style.DotSettings --output=inspectCodeResults.xml .
@@ -31,9 +22,3 @@ jobs:
     - name: Parse InspectCode XML
       run: |
         python3 parse_inspectcode.py
-
-    - name: Run ReviewDog
-      run: |
-        ./bin/reviewdog -efm="%f:%l:%c: %t%*[^:]: %m" -reporter=github-pr-review -fail-on-error=true < report.txt
-      env:
-        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
