@@ -23,7 +23,7 @@ jobs:
     
     - name: Check if solution exists
       run: |
-        if [ ! -f "${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}" ]; then
+        if [ ! -f "${{ github.workspace }}/${{ env.PROJECT_SOLUTION }}" ]; then
           echo "❌ Solution file not found: ${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}"
           exit 1
         fi
