@@ -15,12 +15,14 @@ jobs:
       with:
         dotnet-version: '6.0.x'
 
-    - name: Print Current Directory
-      run: pwd
+    - name: Download ReSharper CLI
+      run: |
+        wget https://download.jetbrains.com/resharper/ReSharperCommandLineTools.2025.1.2.zip
+        unzip ReSharperCommandLineTools.2025.1.2.zip -d resharper-cli
         
     - name: Run InspectCode
       run: |
-        mono /Users/atarasov/resharper-cli/inspectcode.sh --profile=hitapps_style.DotSettings --output=inspectCodeResults.xml .
+        mono ./resharper-cli/inspectcode.sh --profile=hitapps_style.DotSettings --output=inspectCodeResults.xml .
 
     - name: Parse InspectCode XML
       run: |
