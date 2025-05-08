@@ -1,0 +1,49 @@
+name: ReSharper Code Style Check with Comments
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code-style-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Download ReSharper CLI
+      run: |
+        wget https://download.jetbrains.com/resharper/ReSharperCommandLineTools.2024.1.0.zip
+        unzip ReSharperCommandLineTools.2024.1.0.zip -d resharper-cli
+
+    - name: Install ReviewDog
+      run: |
+        curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b ./bin
+
+    - name: Run InspectCode
+      run: |
+        mono ./resharper-cli/inspectcode.sh --profile=hitapps_style.DotSettings --output=inspectCodeResults.xml .
+
+    - name: Parse InspectCode XML
+      run: |
+        python3 -c "
+import xml.etree.ElementTree as ET
+tree = ET.parse('inspectCodeResults.xml')
+root = tree.getroot()
+for issue in root.iter('Issue'):
+    file = issue.attrib.get('File', '')
+    line = issue.attrib.get('Line', '1')
+    message = issue.attrib.get('Message', '')
+    print(f'{file}:{line}:1: warning: {message}')
+" > report.txt
+
+    - name: Run ReviewDog
+      run: |
+        ./bin/reviewdog -efm="%f:%l:%c: %t%*[^:]: %m" -reporter=github-pr-review -fail-on-error=true < report.txt
+      env:
+        REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
