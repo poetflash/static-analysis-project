@@ -20,7 +20,7 @@ jobs:
         
     - name: Run InspectCode
       run: |
-        mono ././././resharper-cli/inspectcode.sh --profile=hitapps_style.DotSettings --output=inspectCodeResults.xml .
+        mono /Users/atarasov/resharper-cli/inspectcode.sh --profile=hitapps_style.DotSettings --output=inspectCodeResults.xml .
 
     - name: Parse InspectCode XML
       run: |
