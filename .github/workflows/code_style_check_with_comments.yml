@@ -1,29 +1,41 @@
-name: ReSharper Code Style Check with Comments
+name: Rider Code Style Check
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # ручной запуск вручную через GitHub Actions
 
 jobs:
-  code-style-check:
-    runs-on: self-hosted
+  rider-style-check:
+    runs-on: self-hosted  # твой self-hosted Mac агент
+
+    env:
+      PROJECT_PATH: static-analysis-project  # относительная папка проекта
+      PROJECT_SOLUTION: static-analysis-project.sln # имя .sln файла проекта
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - name: Setup .NET
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '6.0.x'
 
-    - name: Download ReSharper CLI
+    - name: Find Rider installation
+      id: find_rider
       run: |
-        wget https://download.jetbrains.com/resharper/ReSharperCommandLineTools.2025.1.2.zip
-        unzip ReSharperCommandLineTools.2025.1.2.zip -d resharper-cli
-        
-    - name: Run InspectCode
-      run: |
-        mono ./resharper-cli/inspectcode.sh --profile=hitapps_style.DotSettings --output=inspectCodeResults.xml .
+        RIDER_APP_PATH=$(find /Applications -name "Rider.app" | head -n 1)
+        echo "RIDER_APP_PATH=$RIDER_APP_PATH" >> $GITHUB_ENV
+        echo "Found Rider: $RIDER_APP_PATH"
 
-    - name: Parse InspectCode XML
+    - name: Run Rider InspectCode
       run: |
-        python3 parse_inspectcode.py
+        "$RIDER_APP_PATH/Contents/MacOS/rider" inspectcode \
+          "${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}" \
+          --profile="${{ github.workspace }}/${{ env.PROJECT_PATH }}/hitapps_style.DotSettings" \
+          --output="${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml"
+
+    - name: Upload InspectCode Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: inspectcode-results
+        path: ${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml
