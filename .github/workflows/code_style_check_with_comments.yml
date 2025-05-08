@@ -40,7 +40,6 @@ jobs:
         "${{ env.INSPECTCODE_PATH }}" \
           --profile="${{ github.workspace }}/hitapps_style.DotSettings" \
           --output="${{ github.workspace }}/inspectCodeResults.xml" \
-          --include="${{ github.workspace }}/Assets" \
           "${{ github.workspace }}/${{ env.PROJECT_SOLUTION }}"
 
 
