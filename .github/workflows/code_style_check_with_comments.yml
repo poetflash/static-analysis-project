@@ -30,9 +30,9 @@ jobs:
     - name: Run Rider InspectCode
       run: |
         "$RIDER_APP_PATH/Contents/MacOS/rider" inspectcode \
-          "${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}" \
           --profile="${{ github.workspace }}/${{ env.PROJECT_PATH }}/hitapps_style.DotSettings" \
-          --output="${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml"
+          --output="${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml" \
+          "${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}"
 
     - name: Upload InspectCode Results
       uses: actions/upload-artifact@v4
