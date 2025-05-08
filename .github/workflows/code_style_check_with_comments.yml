@@ -10,6 +10,7 @@ jobs:
     env:
       PROJECT_PATH: static-analysis-project  # папка проекта внутри репозитория
       PROJECT_SOLUTION: static-analysis-project.sln # имя .sln файла проекта
+      INSPECTCODE_PATH: /Users/atarasov/resharper-cli/inspectcode.sh
 
     steps:
     - name: Checkout repository
@@ -19,18 +20,7 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '6.0.x'
-
-    - name: Find inspectcode.sh script
-      id: find_inspectcode
-      run: |
-        INSPECTCODE_PATH=$(find /Applications/Rider.app -name inspectcode.sh | head -n 1)
-        if [ -z "$INSPECTCODE_PATH" ]; then
-          echo "❌ inspectcode.sh not found!"
-          exit 1
-        fi
-        echo "INSPECTCODE_PATH=$INSPECTCODE_PATH" >> $GITHUB_ENV
-        echo "✅ Found inspectcode.sh at: $INSPECTCODE_PATH"
-
+    
     - name: Check if solution exists
       run: |
         if [ ! -f "${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}" ]; then
@@ -40,7 +30,7 @@ jobs:
 
     - name: Run Rider InspectCode
       run: |
-        "$INSPECTCODE_PATH" \
+        "${{ env.INSPECTCODE_PATH }}" \
           --profile="${{ github.workspace }}/${{ env.PROJECT_PATH }}/hitapps_style.DotSettings" \
           --output="${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml" \
           "${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}"
