@@ -9,7 +9,7 @@ jobs:
 
     env:
       PROJECT_PATH: static-analysis-project  # папка проекта внутри репозитория
-      PROJECT_SOLUTION: static-analysis-project.sln # имя .sln файла проекта
+      PROJECT_SOLUTION: static-analysis-ci.sln # имя .sln файла проекта
       INSPECTCODE_PATH: /Users/atarasov/resharper-cli/inspectcode.sh
 
     steps:
