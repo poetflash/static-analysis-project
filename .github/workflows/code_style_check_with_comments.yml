@@ -1,14 +1,14 @@
 name: Rider Code Style Check
 
 on:
-  workflow_dispatch:  # ручной запуск вручную через GitHub Actions
+  workflow_dispatch:  # ручной запуск по кнопке в GitHub Actions
 
 jobs:
   rider-style-check:
     runs-on: self-hosted  # твой self-hosted Mac агент
 
     env:
-      PROJECT_PATH: static-analysis-project  # относительная папка проекта
+      PROJECT_PATH: static-analysis-project  # папка проекта внутри репозитория
       PROJECT_SOLUTION: static-analysis-project.sln # имя .sln файла проекта
 
     steps:
@@ -20,16 +20,27 @@ jobs:
       with:
         dotnet-version: '6.0.x'
 
-    - name: Find Rider installation
-      id: find_rider
+    - name: Find inspectcode.sh script
+      id: find_inspectcode
       run: |
-        RIDER_APP_PATH=$(find /Applications -name "Rider.app" | head -n 1)
-        echo "RIDER_APP_PATH=$RIDER_APP_PATH" >> $GITHUB_ENV
-        echo "Found Rider: $RIDER_APP_PATH"
+        INSPECTCODE_PATH=$(find /Applications/Rider.app -name inspectcode.sh | head -n 1)
+        if [ -z "$INSPECTCODE_PATH" ]; then
+          echo "❌ inspectcode.sh not found!"
+          exit 1
+        fi
+        echo "INSPECTCODE_PATH=$INSPECTCODE_PATH" >> $GITHUB_ENV
+        echo "✅ Found inspectcode.sh at: $INSPECTCODE_PATH"
+
+    - name: Check if solution exists
+      run: |
+        if [ ! -f "${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}" ]; then
+          echo "❌ Solution file not found: ${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}"
+          exit 1
+        fi
 
     - name: Run Rider InspectCode
       run: |
-        "$RIDER_APP_PATH/Contents/MacOS/rider" inspectcode \
+        "$INSPECTCODE_PATH" \
           --profile="${{ github.workspace }}/${{ env.PROJECT_PATH }}/hitapps_style.DotSettings" \
           --output="${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml" \
           "${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}"
