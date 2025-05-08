@@ -1,29 +1,42 @@
-name: ReSharper Code Style Check with Comments
+name: Rider Code Style Check
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # ручной запуск по кнопке в GitHub Actions
 
 jobs:
-  code-style-check:
-    runs-on: self-hosted
+  rider-style-check:
+    runs-on: self-hosted  # твой self-hosted Mac агент
+
+    env:
+      PROJECT_PATH: static-analysis-project  # папка проекта внутри репозитория
+      PROJECT_SOLUTION: static-analysis-project.sln # имя .sln файла проекта
+      INSPECTCODE_PATH: /Users/atarasov/resharper-cli/inspectcode.sh
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - name: Setup .NET
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '6.0.x'
+    
+    - name: Check if solution exists
+      run: |
+        if [ ! -f "${{ github.workspace }}/${{ env.PROJECT_SOLUTION }}" ]; then
+          echo "❌ Solution file not found: ${{ github.workspace }}/${{ env.PROJECT_PATH }}/${{ env.PROJECT_SOLUTION }}"
+          exit 1
+        fi
 
-    - name: Download ReSharper CLI
+    - name: Run Rider InspectCode
       run: |
-        wget https://download.jetbrains.com/resharper/ReSharperCommandLineTools.2025.1.2.zip
-        unzip ReSharperCommandLineTools.2025.1.2.zip -d resharper-cli
-        
-    - name: Run InspectCode
-      run: |
-        mono ./resharper-cli/inspectcode.sh --profile=hitapps_style.DotSettings --output=inspectCodeResults.xml .
+        "${{ env.INSPECTCODE_PATH }}" \
+          --profile="${{ github.workspace }}/${{ env.PROJECT_PATH }}/hitapps_style.DotSettings" \
+          --output="${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml" \
+          "${{ github.workspace }}/${{ env.PROJECT_SOLUTION }}"
 
-    - name: Parse InspectCode XML
-      run: |
-        python3 parse_inspectcode.py
+    - name: Upload InspectCode Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: inspectcode-results
+        path: ${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml
