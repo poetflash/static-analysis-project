@@ -31,8 +31,8 @@ jobs:
     - name: Run Rider InspectCode
       run: |
         "${{ env.INSPECTCODE_PATH }}" \
-          --profile="${{ github.workspace }}/${{ env.PROJECT_PATH }}/hitapps_style.DotSettings" \
-          --output="${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml" \
+          --profile="${{ github.workspace }}/hitapps_style.DotSettings" \
+          --output="${{ github.workspace }}/inspectCodeResults.xml" \
           "${{ github.workspace }}/${{ env.PROJECT_SOLUTION }}"
 
     - name: Upload InspectCode Results
