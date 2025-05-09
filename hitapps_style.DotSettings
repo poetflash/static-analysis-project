@@ -534,3 +534,21 @@
     &lt;/TypePattern&gt;
 &lt;/Patterns&gt;</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/Naming/CSharpNaming/ApplyAutoDetectedRules/@EntryValue">False</s:Boolean></wpf:ResourceDictionary>
+    <wpf:ResourceDictionary
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+      
+      <!-- Игнорировать любые .asset, .shader, .txt и прочее -->
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.unity">*.unity</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.meta">*.meta</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.shader">*.shader</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.shadergraph">*.shadergraph</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.cginc">*.cginc</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.hlsl">*.hlsl</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.asset">*.asset</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.json">*.json</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.ttf">*.ttf</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.png">*.png</s:String>
+      <s:String x:Key="/Default/CodeInspection/ExcludedPaths/=*.txt">*.txt</s:String>
+
+    </wpf:ResourceDictionary>
