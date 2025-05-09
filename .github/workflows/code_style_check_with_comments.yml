@@ -33,16 +33,9 @@ jobs:
         "${{ env.INSPECTCODE_PATH }}" \
           --profile="${{ github.workspace }}/hitapps_style.DotSettings" \
           --output="${{ github.workspace }}/inspectCodeResults.xml" \
+          --no-build \
           "${{ github.workspace }}/${{ env.PROJECT_SOLUTION }}"
     
-    - name: Run Rider InspectCode
-      run: |
-        "${{ env.INSPECTCODE_PATH }}" \
-          --profile="${{ github.workspace }}/hitapps_style.DotSettings" \
-          --output="${{ github.workspace }}/inspectCodeResults.xml" \
-          "${{ github.workspace }}/${{ env.PROJECT_SOLUTION }}"
-
-
     - name: Upload InspectCode Results
       uses: actions/upload-artifact@v4
       with:
