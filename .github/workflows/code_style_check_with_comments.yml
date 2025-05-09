@@ -40,4 +40,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: inspectcode-results
-        path: ${{ github.workspace }}/${{ env.PROJECT_PATH }}/inspectCodeResults.xml
+        path: ${{ github.workspace }}/inspectCodeResults.xml
